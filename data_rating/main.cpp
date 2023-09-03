@@ -27,6 +27,11 @@ std::string getConnectedInterfaces()
                 result = "wlo1";
                 break;
             }
+            else if (line.find("enp9s0f3u2") != std::string::npos)
+            {
+                result = "enp9s0f3u2";
+                break;
+            }
         }
         file.close();
     }
