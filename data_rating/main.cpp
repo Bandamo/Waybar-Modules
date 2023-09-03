@@ -74,9 +74,6 @@ int main(int argc, char** argv){
         if (count == 0){
             ConnectedInterface = getConnectedInterfaces();
             filepath = "/sys/class/net/"+ConnectedInterface+"/statistics/";
-            if (ConnectedInterface != "No"){
-                std::cout << "Found interface : "<< ConnectedInterface << std::endl;
-            }
         }
 
         if (ConnectedInterface != "No"){
