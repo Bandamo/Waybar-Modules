@@ -71,9 +71,10 @@ int main(int argc, char** argv){
     std::ifstream ratefile;
 
     while (1){
-        if (count == 0){
+        if (count >= 3){
             ConnectedInterface = getConnectedInterfaces();
             filepath = "/sys/class/net/"+ConnectedInterface+"/statistics/";
+            count = 0;
         }
 
         if (ConnectedInterface != "No"){
@@ -82,7 +83,7 @@ int main(int argc, char** argv){
             getline(ratefile,tmp);
             ratefile.close();
             rx_rate = rx;
-            rx = std::stoi(tmp);
+            rx = std::stol(tmp);
             rx_rate = (rx - rx_rate) * 1.5;
 
             // Get TX rate
@@ -90,11 +91,13 @@ int main(int argc, char** argv){
             getline(ratefile,tmp);
             ratefile.close();
             tx_rate = tx;
-            tx = std::stoi(tmp);
+            tx = std::stol(tmp);
             tx_rate = (tx - tx_rate) * 1.5;
+        }
+        if (rx_rate == 0 || tx_rate == 0){
+            count ++;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(666));
         std::cout << "⬆️ " << format_rate(tx_rate) << " | " << format_rate(rx_rate) << " ⬇️" << std::endl;
-        count=(count+1)%100;
     }
 }
