@@ -38,7 +38,7 @@ std::string getConnectedInterfaces()
     return result;
 }
 
-std::string format_rate(uint32_t rate){
+std::string format_rate(uint32_t rate, bool in){
     std::string result;
     float tmpfloat = 0;
     int tmpint = 0;
@@ -55,6 +55,26 @@ std::string format_rate(uint32_t rate){
         tmpfloat = rate / 1048576.;
         result = (std::to_string(tmpfloat)).substr(0,4) + " Mo/s";
     }
+    else
+    {
+        tmpfloat = rate / 1073741824.;
+        result = (std::to_string(tmpfloat)).substr(0,4) + " Go/s";
+    }
+
+    if (result.size() < 8){
+        tmpint = 10 - result.size();
+        if(in){
+            for (int i = 0; i < tmpint; i++){
+                result = " " + result;
+            }
+        }
+        else{
+            for (int i = 0; i < tmpint; i++){
+                result = result + " ";
+            }
+        }
+    }
+    
     return result;
     
 }
@@ -98,6 +118,6 @@ int main(int argc, char** argv){
             count ++;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(666));
-        std::cout << "⬆️ " << format_rate(tx_rate) << " | " << format_rate(rx_rate) << " ⬇️" << std::endl;
+        std::cout << "⬆️ " << format_rate(tx_rate, 1) << " | " << format_rate(rx_rate, 0) << " ⬇️" << std::endl;
     }
 }
