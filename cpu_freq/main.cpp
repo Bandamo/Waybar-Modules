@@ -6,7 +6,7 @@
 #include <cstdint>
 
 #define nb_proc 12
-#define base_freq 1190
+#define base_freq 0
 
 
 // Find connected network interfaces
@@ -21,23 +21,35 @@ int main(int argc, char** argv){
     std::string line;
     int freq;
     int cpu_count;
+    int count = 0;
+    int current_freq = 0;
+    int step;
 
     while (1){
-        freq = 0;
-        cpufile.open("/proc/cpuinfo");
-        if (cpufile.is_open()){
-            while (getline(cpufile, line)){
-                if (line.find("MHz") != std::string::npos){
-                    freq += get_number(line);
+        if (count == 0){
+            freq = 0;
+            cpufile.open("/proc/cpuinfo");
+            if (cpufile.is_open()){
+                while (getline(cpufile, line)){
+                    if (line.find("MHz") != std::string::npos){
+                        freq += get_number(line);
+                    }
                 }
+                cpufile.close();
+
+                freq = freq/nb_proc - base_freq;
+                step = (freq - current_freq)/5;
             }
-            cpufile.close();
-
-            freq = freq/nb_proc- base_freq;
         }
+        else if (count == 5)
+        {
+            count = 0;
+        }
+        else{count++;}
+        current_freq += step;
         
-        std::cout << freq << " MHz"<< std::endl;
+        std::cout << current_freq << " MHz"<< std::endl;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(750));
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
     }
 }
